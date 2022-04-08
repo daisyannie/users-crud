@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using users_crud.Model;
+using users_crud.Repository;
 
 namespace users_crud.Controllers
 {
@@ -7,24 +8,38 @@ namespace users_crud.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private static List<User> Users()
+        private readonly IUserRepository _repository;
+
+        public UserController(IUserRepository repository)
         {
-            return new List<User> {
-                new User{ Name = "Daisy", Id = 1, DateBirth = new DateTime(1988, 08, 08) }
-            };
+            _repository = repository;
         }
+
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> ListUsers()
         {
-            return Ok(Users());
+            var users = await _repository.ListUsers();
+            return users.Any()
+                ? Ok(users)
+                : NoContent();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            var user = await _repository.FindUserById(id);
+            return user != null
+                ? Ok(user)
+                : NoContent();
         }
 
         [HttpPost]
-        public IActionResult Post(User user)
+        public async Task<IActionResult> Post(User user)
         {
-            var users = Users();
-            users.Add(user);
-            return Ok(users);
+            _repository.CreateUser(user);
+            return await _repository.SaveChangesAsync()
+                ? Ok("Usuário adicionado com sucesso")
+                : BadRequest("Erro ao salvar o usuário");
         }
     }
 }
