@@ -15,19 +15,18 @@ namespace users_crud.Repository
         public void CreateUser(User user)
         {
             _context.Add(user);
-            _context.SaveChangesAsync();
         }
 
         public void DeleteUser(User user)
         {
-            throw new NotImplementedException();
+            _context.Remove(user);
         }
         public async Task<IEnumerable<User>> ListUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<User> FindUserById(int id)
+        public async Task<User?> FindUserById(int id)
         {
             return await _context.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
@@ -35,7 +34,7 @@ namespace users_crud.Repository
 
         public void UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            _context.Update(user);
         }
         public async Task<bool> SaveChangesAsync()
         {

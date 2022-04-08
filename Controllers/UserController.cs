@@ -16,7 +16,7 @@ namespace users_crud.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ListUsers()
+        public async Task<IActionResult> List()
         {
             var users = await _repository.ListUsers();
             return users.Any()
@@ -25,7 +25,7 @@ namespace users_crud.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var user = await _repository.FindUserById(id);
             return user != null
@@ -34,12 +34,40 @@ namespace users_crud.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(User user)
+        public async Task<IActionResult> Create(User user)
         {
             _repository.CreateUser(user);
             return await _repository.SaveChangesAsync()
                 ? Ok("Usuário adicionado com sucesso")
                 : BadRequest("Erro ao salvar o usuário");
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, User user)
+        {
+            var existingUser = await _repository.FindUserById(id);
+            if(existingUser == null) return NotFound("Usuário não encontrado");
+
+            existingUser.Name = user.Name ?? existingUser.Name;
+            existingUser.DateBirth = user.DateBirth != new DateTime()
+            ? user.DateBirth : existingUser.DateBirth;
+
+            _repository.UpdateUser(existingUser);
+            return await _repository.SaveChangesAsync()
+                ? Ok("Usuário atualizado com sucesso")
+                : BadRequest("Erro ao atualizar o usuário");
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var existingUser = await _repository.FindUserById(id);
+            if(existingUser == null) return NotFound("Usuário não encontrado");
+
+            _repository.DeleteUser(existingUser);
+            return await _repository.SaveChangesAsync()
+                ? Ok("Usuário excluído com sucesso")
+                : BadRequest("Erro ao excluir o usuário");
         }
     }
 }

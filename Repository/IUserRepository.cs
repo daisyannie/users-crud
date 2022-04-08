@@ -6,7 +6,7 @@ namespace users_crud.Repository
     {
         Task<IEnumerable<User>> ListUsers();
 
-        Task<User> FindUserById(int id);
+        Task<User?> FindUserById(int id);
 
         void CreateUser(User user);
 
