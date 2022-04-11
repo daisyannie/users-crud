@@ -13,6 +13,7 @@ namespace users_crud.Controllers
         private readonly CreateUser _createUserUseCase;
         private readonly UpdateUser _updateUserUseCase;
         private readonly ListUsers _listUsersUseCase;
+        private readonly FindUser _findUserUseCase;
 
         public UserController(IUserRepository repository)
         {
@@ -20,6 +21,7 @@ namespace users_crud.Controllers
             _createUserUseCase = new CreateUser(repository);
             _updateUserUseCase = new UpdateUser(repository);
             _listUsersUseCase = new ListUsers(repository);
+            _findUserUseCase = new FindUser(repository);
         }
 
         [HttpGet]
@@ -34,10 +36,10 @@ namespace users_crud.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var user = await _repository.FindUserById(id);
+            var user = await _findUserUseCase.Find(id);
             return user != null
                 ? Ok(user)
-                : NoContent();
+                : NotFound();
         }
 
         [HttpPost]
