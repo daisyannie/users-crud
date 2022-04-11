@@ -11,11 +11,13 @@ namespace users_crud.Controllers
     {
         private readonly IUserRepository _repository;
         private readonly CreateUser _createUserUseCase;
+        private readonly UpdateUser _updateUserUseCase;
 
         public UserController(IUserRepository repository)
         {
             _repository = repository;
             _createUserUseCase = new CreateUser(repository);
+            _updateUserUseCase = new UpdateUser(repository);
         }
 
         [HttpGet]
@@ -47,15 +49,7 @@ namespace users_crud.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, User user)
         {
-            var existingUser = await _repository.FindUserById(id);
-            if(existingUser == null) return NotFound("Usuário não encontrado");
-
-            existingUser.Name = user.Name ?? existingUser.Name;
-            existingUser.DateBirth = user.DateBirth != new DateTime()
-            ? user.DateBirth : existingUser.DateBirth;
-
-            _repository.UpdateUser(existingUser);
-            return await _repository.SaveChangesAsync()
+            return await _updateUserUseCase.Update(id, user)
                 ? Ok("Usuário atualizado com sucesso")
                 : BadRequest("Erro ao atualizar o usuário");
         }
