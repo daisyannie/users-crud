@@ -12,18 +12,20 @@ namespace users_crud.Controllers
         private readonly IUserRepository _repository;
         private readonly CreateUser _createUserUseCase;
         private readonly UpdateUser _updateUserUseCase;
+        private readonly ListUsers _listUsersUseCase;
 
         public UserController(IUserRepository repository)
         {
             _repository = repository;
             _createUserUseCase = new CreateUser(repository);
             _updateUserUseCase = new UpdateUser(repository);
+            _listUsersUseCase = new ListUsers(repository);
         }
 
         [HttpGet]
         public async Task<IActionResult> List()
         {
-            var users = await _repository.ListUsers();
+            var users = await _listUsersUseCase.List();
             return users.Any()
                 ? Ok(users)
                 : NoContent();
