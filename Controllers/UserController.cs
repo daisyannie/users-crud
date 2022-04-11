@@ -15,6 +15,8 @@ namespace users_crud.Controllers
         private readonly ListUsers _listUsersUseCase;
         private readonly FindUser _findUserUseCase;
 
+        private readonly DeleteUser _deleteUserUseCase;
+
         public UserController(IUserRepository repository)
         {
             _repository = repository;
@@ -22,6 +24,7 @@ namespace users_crud.Controllers
             _updateUserUseCase = new UpdateUser(repository);
             _listUsersUseCase = new ListUsers(repository);
             _findUserUseCase = new FindUser(repository);
+            _deleteUserUseCase = new DeleteUser(repository);
         }
 
         [HttpGet]
@@ -61,11 +64,7 @@ namespace users_crud.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var existingUser = await _repository.FindUserById(id);
-            if(existingUser == null) return NotFound("Usuário não encontrado");
-
-            _repository.DeleteUser(existingUser);
-            return await _repository.SaveChangesAsync()
+            return await _deleteUserUseCase.Delete(id)
                 ? Ok("Usuário excluído com sucesso")
                 : BadRequest("Erro ao excluir o usuário");
         }
