@@ -15,7 +15,7 @@ builder.Services.AddDbContext<UserContext>(options => {
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository, DbUserRepository>();
 
 var app = builder.Build();
 

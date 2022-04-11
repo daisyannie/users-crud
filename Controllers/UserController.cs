@@ -14,7 +14,6 @@ namespace users_crud.Controllers
         private readonly UpdateUser _updateUserUseCase;
         private readonly ListUsers _listUsersUseCase;
         private readonly FindUser _findUserUseCase;
-
         private readonly DeleteUser _deleteUserUseCase;
 
         public UserController(IUserRepository repository)

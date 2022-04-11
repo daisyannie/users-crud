@@ -4,11 +4,11 @@ using users_crud.Model;
 
 namespace users_crud.Repository
 {
-    public class UserRepository : IUserRepository
+    public class DbUserRepository : IUserRepository
     {
         private readonly UserContext _context;
 
-        public UserRepository(UserContext context)
+        public DbUserRepository(UserContext context)
         {
             _context = context;
         }
