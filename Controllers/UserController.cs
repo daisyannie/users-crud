@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using users_crud.Model;
 using users_crud.Repository;
+using users_crud.UseCases;
 
 namespace users_crud.Controllers
 {
@@ -9,10 +10,12 @@ namespace users_crud.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _repository;
+        private readonly CreateUser _createUserUseCase;
 
         public UserController(IUserRepository repository)
         {
             _repository = repository;
+            _createUserUseCase = new CreateUser(repository);
         }
 
         [HttpGet]
@@ -36,8 +39,7 @@ namespace users_crud.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(User user)
         {
-            _repository.CreateUser(user);
-            return await _repository.SaveChangesAsync()
+            return await _createUserUseCase.Create(user)
                 ? Ok("Usuário adicionado com sucesso")
                 : BadRequest("Erro ao salvar o usuário");
         }
